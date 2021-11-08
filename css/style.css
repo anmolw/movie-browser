@@ -1,0 +1,23 @@
+:root {
+    
+}
+
+.navbar {
+    background-color: #000000;
+}
+
+#results {
+    list-style: none;
+}
+
+.movie-poster-small {
+    width: 200px;
+}
+
+.results-entry {
+    max-height: 200px;
+}
+
+.results-entry > div.col-2 {
+    overflow:hidden;
+}

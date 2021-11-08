@@ -1,0 +1,1 @@
+Frontend for the OMDB API using vanilla JS and Bootstrap.
