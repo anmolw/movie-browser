@@ -4,23 +4,27 @@ const omdbURL = `https://www.omdbapi.com/?apikey=${apiKey}`;
 
 // Object containing helper functions for interacting with the OMDB API
 const OMDB = {
+    // Return a Response promise
     makeRequest: function (queryString) {
-        return new Promise((resolve, reject) => {
-            let request = new XMLHttpRequest();
-            request.open("GET", `${omdbURL}&${queryString}`);
-            request.addEventListener("load", function () {
-                // Something went wrong. Reject the promise
-                if (this.status !== 200) {
-                    reject();
-                }
-                else {
-                    // Parse the response JSON and return it
-                    resolve(JSON.parse(this.responseText));
-                }
-            });
-            request.send();
-        });
+        return fetch(`${omdbURL}&${queryString}`);
     },
+    // makeRequest: function (queryString) {
+    //     return new Promise((resolve, reject) => {
+    //         let request = new XMLHttpRequest();
+    //         request.open("GET", `${omdbURL}&${queryString}`);
+    //         request.addEventListener("load", function () {
+    //             // Something went wrong. Reject the promise
+    //             if (this.status !== 200) {
+    //                 reject();
+    //             }
+    //             else {
+    //                 // Parse the response JSON and return it
+    //                 resolve(JSON.parse(this.responseText));
+    //             }
+    //         });
+    //         request.send();
+    //     });
+    // },
     search: function (query) {
         return this.makeRequest(`s=${query}&type=movie`);
     },

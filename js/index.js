@@ -1,36 +1,61 @@
 let timeoutRef;
+// References to important UI elements
+const resultsList = document.getElementById("results");
+const searchBox = document.getElementById("search-box");
+const searchButton = document.getElementById("search-button");
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Register the searchbox listener
-    let searchBox = document.getElementById("search-box");
-    let searchButton = document.getElementById("search-button");
-    // searchButton.addEventListener("click", () => { });
-    searchBox.addEventListener("input", searchBoxListener);
-    searchBox.addEventListener("keyup", searchBoxEnterListener);
-    // let exampleResults = `{"Search":[{"Title":"Top Gun","Year":"1986","imdbID":"tt0092099","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BZjQxYTA3ODItNzgxMy00N2Y2LWJlZGMtMTRlM2JkZjI1ZDhhXkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1_SX300.jpg"},{"Title":"Top Gun","Year":"1955","imdbID":"tt0048734","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BNTFiZTBiZGMtNzNmMy00NDZiLWE5MGEtZmZjN2I3NTQ3ZmExXkEyXkFqcGdeQXVyMTMxMTY0OTQ@._V1_SX300.jpg"},{"Title":"Danger Zone: The Making of 'Top Gun'","Year":"2004","imdbID":"tt0441613","Type":"movie","Poster":"N/A"},{"Title":"Top Gun in 60 Seconds","Year":"2010","imdbID":"tt1637998","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BNDk4NzQzNDE5OF5BMl5BanBnXkFtZTcwOTA3MjY1Mw@@._V1_SX300.jpg"},{"Title":"Top Gun 2: Back to Traffic School","Year":"2012","imdbID":"tt2326220","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BZmZiNDVmMDgtMzIzNS00YmUzLTg2MTctOTAwYTY3NDZmYjZlL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjQzNzQwNjg@._V1_SX300.jpg"},{"Title":"WWI Top Gun: Revealed","Year":"2012","imdbID":"tt2331151","Type":"movie","Poster":"N/A"},{"Title":"Best of the Best: Inside the Real Top Gun","Year":"2004","imdbID":"tt0441843","Type":"movie","Poster":"N/A"},{"Title":"Russian Top Gun","Year":"1990","imdbID":"tt0300434","Type":"movie","Poster":"N/A"},{"Title":"Top Gun: Maverick","Year":"2022","imdbID":"tt1745960","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BOGUwZDRjNTYtYjI0Zi00OWZjLTgxZWItZjNiZWEyYThlZTkyXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_SX300.jpg"},{"Title":"Top Gun: Maverick","Year":"2022","imdbID":"tt1745960","Type":"movie","Poster":"https://m.media-amazon.com/images/M/MV5BOGUwZDRjNTYtYjI0Zi00OWZjLTgxZWItZjNiZWEyYThlZTkyXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_SX300.jpg"}],"totalResults":"18","Response":"True"}`
-    // renderResults(JSON.parse(exampleResults));
-});
+
+function init() {
+    // Register the searchbox listeners
+    searchBox.addEventListener("input", searchBoxInputListener);
+    searchBox.addEventListener("keyup", searchBoxKeyListener);
+}
 
 async function performSearch(query) {
     // Perform a search request and then call the render function
-    let response = await OMDB.search(query);
-    renderResults(response);
-    console.log(response);
+    try {
+        let response = await OMDB.search(query);
+        let json = await response.json();
+        renderResults(json);
+        console.log(json);
+    } catch (error) {
+        console.error(error);
+    }
+
 }
 
-function searchBoxEnterListener(event) {
+function searchBoxInputListener(event) {
+    if (searchBox.value !== "") {
+        // If there is a pending search request that has not been sent yet, cancel it
+        if (timeoutRef !== undefined) {
+            clearTimeout(timeoutRef);
+            timeoutRef = undefined;
+        }
+        // Used to limit how frequently API calls are made
+        // Waits 300ms before sending a search request to the OMDB API
+        timeoutRef = setTimeout(performSearch, 300, searchBox.value);
+    }
+    else if (timeoutRef !== undefined) {
+        clearTimeout(timeoutRef);
+    }
+}
+
+function searchBoxKeyListener(event) {
     // Called when the user presses enter in the search box
-    if (event.code === "Enter" && event.target.value !== "") {
+    if (event.code === "Enter" && searchBox.value !== "") {
         if (timeoutRef !== undefined) {
             clearTimeout(timeoutRef);
         }
-        performSearch(event.target.value);
+        performSearch(searchBox.value);
+    }
+    // Clear the search box when the user presses escape
+    if (event.code === "Escape") {
+        searchBox.value = "";
     }
 }
 
 function renderResults(response) {
     // Renders the search results
-    let resultsList = document.getElementById("results");
     clearCurrentResults();
     if (response.Response === 'True') {
         let resultElementArray = [];
@@ -38,18 +63,18 @@ function renderResults(response) {
         response.Search.forEach(result => {
             resultElementArray.push(createResultElement(result));
         });
+        // Add all elements from the results array to the results list
         resultsList.append(...resultElementArray);
     }
 
 }
 
 function showPlaceholders() {
-    let resultsList = document.getElementById("results");
     let placeholderArray = [];
     for (let i = 0; i < 10; i++) {
-        let placeholderElem = document.createElement("")
+        let placeholderElem = document.createElement("");
     }
-    resultsList.append(placeholderArray);
+    resultsList.append(...placeholderArray);
 }
 
 function showAlert() {
@@ -57,41 +82,106 @@ function showAlert() {
 }
 
 function clearCurrentResults() {
-    let resultsList = document.getElementById("results");
     resultsList.innerHTML = "";
+}
+
+function createPlaceHolder() {
+    // Creates a placeholder element
+    let resultElem = document.createElement("div");
+    let resultCard = document.createElement("div");
+    let posterLink = document.createElement("a");
+    let posterContainer = document.createElement("div");
+    let posterImg = document.createElement("img");
+    let cardBody = document.createElement("div");
+    let cardTitle = document.createElement("h6");
+    let cardSubtitle = document.createElement("p");
+    let favouriteButton = document.createElement("input");
+    let favouriteButtonLabel = document.createElement("label");
+
+    // Add css classes
+    resultElem.classList.add("col");
+    resultCard.classList.add("card", "mb-2");
+    cardBody.classList.add("card-body");
+    cardTitle.classList.add("card-title");
+    cardSubtitle.classList.add("card-subtitle", "text-muted");
+    favouriteButton.classList.add("favourite-button", "btn-check");
+    favouriteButtonLabel.classList.add("btn", "btn-sm", "btn-outline-danger", "far", "fa-heart");
+    posterLink.href = `/movie.html#${result.imdbID}`;
+    posterContainer.classList.add("card-img-top", "poster-container");
+
+    //Set miscellaneous properties
+    favouriteButton.setAttribute("type", "checkbox");
+    favouriteButton.setAttribute("id", `btn-check-${result.imdbID}`);
+    favouriteButtonLabel.setAttribute("for", `btn-check-${result.imdbID}`);
+
+    // Set the content of inner elements
+    cardTitle.innerText = `${result.Title}`;
+    cardSubtitle.innerText = `${result.Year}`;
+
+    if (result.Poster !== "N/A") {
+        posterImg.setAttribute("src", `${result.Poster}`);
+    }
+
+    posterLink.appendChild(posterContainer);
+    posterContainer.appendChild(posterImg);
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardSubtitle);
+    cardBody.appendChild(favouriteButton);
+    cardBody.appendChild(favouriteButtonLabel);
+    resultCard.appendChild(posterLink);
+    resultCard.appendChild(cardBody);
+    resultElem.appendChild(resultCard);
+    return resultElem;
 }
 
 function createResultElement(result) {
     // Creates the DOM representation of a result
-    let resultElem = document.createElement("li");
-    let thumbnailLink = document.createElement("a");
-    let thumbnailImg = document.createElement("img");
-    let info = document.createElement("span");
+    let resultElem = document.createElement("div");
+    let resultCard = document.createElement("div");
+    let posterLink = document.createElement("a");
+    let posterContainer = document.createElement("div");
+    let posterImg = document.createElement("img");
+    let cardBody = document.createElement("div");
+    let cardTitle = document.createElement("h6");
+    let cardSubtitle = document.createElement("p");
+    let favouriteButton = document.createElement("input");
+    let favouriteButtonLabel = document.createElement("label");
 
-    thumbnailLink.href = `/movie.html#${result.imdbID}`;
-    resultElem.classList.add("clearfix", "list-group-item");
-    thumbnailImg.classList.add("rounded", "float-start", "movie-poster-small");
-    info.innerText = `${result.Title} (${result.Year})`;
+    // Add css classes
+    resultElem.classList.add("col");
+    resultCard.classList.add("card", "mb-2");
+    cardBody.classList.add("card-body");
+    cardTitle.classList.add("card-title");
+    cardSubtitle.classList.add("card-subtitle", "text-muted");
+    favouriteButton.classList.add("favourite-button", "btn-check");
+    favouriteButtonLabel.classList.add("btn", "btn-sm", "btn-outline-danger", "far", "fa-heart");
+    posterLink.href = `/movie.html#${result.imdbID}`;
+    posterContainer.classList.add("card-img-top", "poster-container");
+
+    //Set miscellaneous properties
+    favouriteButton.setAttribute("type", "checkbox");
+    favouriteButton.setAttribute("id", `btn-check-${result.imdbID}`);
+    favouriteButtonLabel.setAttribute("for", `btn-check-${result.imdbID}`);
+
+    // Set the content of inner elements
+    cardTitle.innerText = `${result.Title}`;
+    cardSubtitle.innerText = `${result.Year}`;
 
     if (result.Poster !== "N/A") {
-        thumbnailImg.setAttribute("src", `${result.Poster}`);
+        posterImg.setAttribute("src", `${result.Poster}`);
     }
 
-    thumbnailLink.appendChild(thumbnailImg);
-    resultElem.appendChild(thumbnailLink);
-    resultElem.appendChild(info);
+    posterLink.appendChild(posterContainer);
+    posterContainer.appendChild(posterImg);
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardSubtitle);
+    cardBody.appendChild(favouriteButton);
+    cardBody.appendChild(favouriteButtonLabel);
+    resultCard.appendChild(posterLink);
+    resultCard.appendChild(cardBody);
+    resultElem.appendChild(resultCard);
     return resultElem;
 }
 
-function searchBoxListener(event) {
-    if (event.target.value !== "") {
-        if (timeoutRef !== undefined) {
-            clearTimeout(timeoutRef);
-        }
-        // Used to limit how frequently API calls are made
-        timeoutRef = setTimeout(performSearch, 300, event.target.value);
-    }
-    else if (timeoutRef !== undefined) {
-        clearTimeout(timeoutRef);
-    }
-}
+
+init();

@@ -2,22 +2,39 @@
     
 }
 
-.navbar {
-    background-color: #000000;
-}
-
-#results {
-    list-style: none;
-}
-
 .movie-poster-small {
     width: 200px;
 }
 
-.results-entry {
-    max-height: 200px;
+.poster-container {
+    background-color: rgb(230, 194, 255);
+    position: relative;
+    width: 100%;
+    padding-bottom: 150%;
+    overflow: hidden;
 }
 
-.results-entry > div.col-2 {
-    overflow:hidden;
+.poster-container > img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.card-title {
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favourite-button {
+    margin-left: auto;
+}
+
+.results-entry {
+    max-height: 200px;
 }
