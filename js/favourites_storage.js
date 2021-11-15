@@ -1,4 +1,5 @@
 const FavouritesStorage = {
+    // Load favourites from the browser's local storage
     loadFavourites: function () {
         const favouritesObj = localStorage.getItem("favourites");
         if (!favouritesObj) {

@@ -18,9 +18,35 @@ main {
     /* min-height: calc(100vh - 3.5rem); */
 }
 
+.navbar-nav .nav-link {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
 /** Negative margin utility class **/
 .ms-n5 {
     margin-left: -40px;
+}
+
+#quick-facts > span {
+    margin-right: 0.5rem;
+}
+
+#age-rating {
+    visibility: hidden;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border: 1px solid black;
+    border-radius: 10%;
+    align-self: center;
+    padding: 0px 4px;
+}
+
+.rating-icon {
+    color:rgb(184, 172, 72);
+    padding: 0 0.2rem;
 }
 
 .mr-auto {

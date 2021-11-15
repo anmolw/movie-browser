@@ -3,22 +3,13 @@ let timeoutRef;
 const resultsList = document.getElementById("results");
 const searchBox = document.getElementById("search-box");
 const searchButton = document.getElementById("search-button");
+let lastSearchValue = "";
 
 
 function init() {
-    // Register the searchbox listeners
-    searchBox.addEventListener("input", searchBoxInputListener);
+    // Register the searchbox listener
+    // searchBox.addEventListener("input", searchBoxInputListener);
     searchBox.addEventListener("keyup", searchBoxKeyListener);
-}
-
-// Function that returns a debounced version of another function
-// Used to limit the number of API queries sent
-function debounce(func, timeout = 300) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
-    };
 }
 
 async function performSearch(query) {
@@ -34,9 +25,6 @@ async function performSearch(query) {
 
 }
 
-const debouncedSearch = debounce(performSearch, 300);
-
-
 function searchBoxInputListener(event) {
 
     // If there is a pending search request that has not been sent yet, cancel it
@@ -45,7 +33,7 @@ function searchBoxInputListener(event) {
     if (searchBox.value !== "") {
         // Used to limit how frequently API calls are made
         // Waits 300ms before sending a search request to the OMDB API
-        timeoutRef = setTimeout(performSearch, 300, searchBox.value);
+
     }
     else {
         clearCurrentResults();
@@ -53,14 +41,20 @@ function searchBoxInputListener(event) {
 }
 
 function searchBoxKeyListener(event) {
-    // Perform a search when the user presses enter
-    if (event.code === "Enter" && searchBox.value !== "") {
+    if (searchBox.value !== lastSearchValue) {
+        lastSearchValue = searchBox.value;
         clearTimeout(timeoutRef);
-        performSearch(searchBox.value);
+        if (searchBox.value !== "") {
+            timeoutRef = setTimeout(performSearch, 300, searchBox.value);
+        }
+        else {
+            clearCurrentResults();
+        }
     }
-    // Clear the search box when the user presses escape
-    if (event.code === "Escape") {
+    else if (event.keyCode === "Escape") {
+        lastSearchValue = "";
         searchBox.value = "";
+        clearCurrentResults();
     }
 }
 
@@ -76,19 +70,23 @@ function renderResults(response) {
         // Add all elements from the results array to the results list
         resultsList.append(...resultElementArray);
     }
-
-}
-
-function showPlaceholders() {
-    let placeholderArray = [];
-    for (let i = 0; i < 10; i++) {
-        let placeholderElem = document.createElement("");
+    else {
+        showAlert(`Error: ${response.Error}`);
     }
-    resultsList.append(...placeholderArray);
+
 }
 
-function showAlert() {
-
+// Display an alert with the provided message
+function showAlert(message) {
+    let currentAlert = resultsList.querySelector("#alert");
+    if (currentAlert) {
+        resultsList.removeChild(currentAlert);
+    }
+    let alertElem = document.createElement("div");
+    alertElem.id = "alert";
+    alertElem.classList.add("col", "alert", "alert-danger", "mx-auto", "text-center");
+    alertElem.innerText = message;
+    resultsList.appendChild(alertElem);
 }
 
 function clearCurrentResults() {

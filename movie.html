@@ -23,8 +23,8 @@
         <div class="container-md">
             <a href="index.html" class="navbar-brand">Movies</a>
             <!-- Navbar links -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="mr-auto">
+                <ul class="navbar-nav px-1 flex-row me-auto mb-0">
                     <li class="nav-item">
                         <a href="index.html" class="nav-link">Search</a>
                     </li>
@@ -41,18 +41,32 @@
                 <div class="poster-container rounded-3 shadow-sm mb-2" id="movie-poster"></div>
             </div>
             <div class="d-flex col-12 col-md-8 flex-column justify-content-center">
-                <h2 id="movie-title"></h2>
-                <div id="movie-year" class="text-muted mb-2"></div>
-                <div id="plot-summary" class="mb-2"></div>
+                <h2 id="movie-title" class="placeholder-glow"><span class="col-6 placeholder"></span></h2>
+                <div id="quick-facts" class="d-flex mb-2 align-items-center">
+                    <span id="movie-year" class="text-muted placeholder-glow">
+                        <span class="col-2 placeholder"></span>
+                    </span>
+                    <span id="movie-rating">
+                    </span>
+                    <span id="movie-runtime"></span>
+                    <span id="age-rating">
+                    </span>
+                </div>
+                <div id="plot-summary" class="mb-2 placeholder-glow"><span class="col-8 placeholder"></span><span
+                        class="col-6 placeholder"></span></div>
+
+                <div class=""><button class="btn btn-danger disabled placeholder col-3" id="favourite-button"></button>
+                </div>
             </div>
         </div>
     </main>
-    <footer class="d-block mt-auto py-5 bg-dark">
+    <footer class="d-block mt-auto py-2 bg-dark">
         <div class="container text-white">
-            View source code on github
+            View source code on <a href="https://github.com/anmolw/movie-browser">GitHub</a>
         </div>
     </footer>
     <script src="js/omdb_api.js"></script>
+    <script src="js/favourites_storage.js"></script>
     <script src="js/movie_info.js"></script>
 </body>
 

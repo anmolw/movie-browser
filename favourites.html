@@ -23,8 +23,8 @@
         <div class="container-md">
             <a href="index.html" class="navbar-brand">Movies</a>
             <!-- Navbar links -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="mr-auto">
+                <ul class="navbar-nav px-1 flex-row me-auto mb-0">
                     <li class="nav-item">
                         <a href="index.html" class="nav-link">Search</a>
                     </li>
@@ -35,17 +35,17 @@
             </div>
         </div>
     </nav>
-    <main class="container-md p-2 p-md-3 bg-light">
+    <main class="flex-shrink-0 flex-fill p-3 container-md bg-light">
         <!-- Favourites list - will be populated by AJAX -->
         <div class="row row-cols-2 row-cols-md-4 row-cols-xl-5 px-3" id="favourites-list">
         </div>
     </main>
-    <footer class="d-block mt-auto py-5 bg-dark">
+    <footer class="d-block mt-auto py-2 bg-dark">
         <div class="container text-white">
-            View source code on github
+            View source code on <a href="https://github.com/anmolw/movie-browser">GitHub</a>
         </div>
     </footer>
-    <script src="js/movie_element.js"></script>
+    <script src="js/movie_card.js"></script>
     <script src="js/favourites_storage.js"></script>
     <script src="js/favourites.js"></script>
 </body>
