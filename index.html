@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 
 <head>
     <meta charset="UTF-8">
@@ -17,46 +17,61 @@
 
 </head>
 
-<body>
+<body class="d-flex flex-column h-100">
     <!-- Navbar container -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-md">
-            <a href="#" class="navbar-brand">Movies</a>
+            <a href="index.html" class="navbar-brand">Movies</a>
             <!-- Navbar links -->
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link active">Home</a>
+                        <a href="index.html" class="nav-link active">Search</a>
                     </li>
                     <li class="nav-item">
-                        <a href="favourites.html" class="nav-link active">Favourites</a>
+                        <a href="favourites.html" class="nav-link">Favourites</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <main class="container-md">
+    <main class="flex-shrink-0 flex-fill container-md bg-light">
         <!-- Search box container -->
-        <div class="row text-center">
-            <div class="col-md-8 mx-auto"></div>
+        <div class="row py-lg-5 text-center">
+            <div class="col my-3">
+                <h2 class="fw-light">Search the OMDB API</h2>
+                <p class="mb-0">Search from a database of hundreds of thousands of movies.</p>
+                <p>Results will appear as you type.</p>
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="input-group mx-auto mt-5">
-                    <input type="text" class="form-control" name="" id="search-box" placeholder="Search for movies">
-                    <button class="btn btn-primary" id="search-button">Search</button>
+            <div class="col-sm-8 mx-auto">
+                <div class="input-group">
+                    <input type="search" class="form-control border-end-0 border" name="" id="search-box"
+                        placeholder="Search for movies">
+                    <span class="input-group-append"><button
+                            class="btn btn-outline-secondary border-start-0 bg-white border ms-n5" id="search-button"><i
+                                class="fa fa-search" type="button"></i></button></span>
                 </div>
-
             </div>
         </div>
 
         <!-- Results list - will be populated by AJAX -->
-        <div class="row row-cols-3 row-cols-md-4 row-cols-xl-5 my-5" id="results">
+        <div class="row row-cols-2 row-cols-md-4 row-cols-xl-5 my-5 px-3" id="results">
         </div>
+
+
     </main>
 
-    <script src="js/omdbapi.js"></script>
-    <script src="js/favouritesstorage.js"></script>
+    <footer class="d-block mt-auto py-5 bg-dark">
+        <div class="container text-white">
+            View source code on github
+        </div>
+    </footer>
+
+    <script src="js/omdb_api.js"></script>
+    <script src="js/favourites_storage.js"></script>
+    <script src="js/movie_element.js"></script>
     <script src="js/index.js"></script>
 </body>
 

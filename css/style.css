@@ -2,39 +2,46 @@
     
 }
 
-.movie-poster-small {
-    width: 200px;
-}
-
+/** 
+Poster images returned the by the OMDB API do not have uniform sizes.
+Generally, movie posters have a 2:3 aspect ratio, so all poster images
+are stretched to fit as a background image of a container with this aspect ratio.
+ **/
 .poster-container {
-    background-color: rgb(230, 194, 255);
-    position: relative;
-    width: 100%;
+    background-color: rgb(126, 126, 126);
+    max-height: 200px;
     padding-bottom: 150%;
-    overflow: hidden;
 }
 
-.poster-container > img {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
+/** Makes the main content container occupy the entire viewport vertically **/
+main {
+    /* min-height: calc(100vh - 3.5rem); */
 }
 
+/** Negative margin utility class **/
+.ms-n5 {
+    margin-left: -40px;
+}
+
+.mr-auto {
+    margin-right: auto;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+footer {
+    display: block;
+}
+
+/** Truncate movie titles **/
 .card-title {
     text-overflow: ellipsis;
     overflow: hidden; 
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .favourite-button {
     margin-left: auto;
-}
-
-.results-entry {
-    max-height: 200px;
 }

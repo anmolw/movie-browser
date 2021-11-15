@@ -11,6 +11,16 @@ function init() {
     searchBox.addEventListener("keyup", searchBoxKeyListener);
 }
 
+// Function that returns a debounced version of another function
+// Used to limit the number of API queries sent
+function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
 async function performSearch(query) {
     // Perform a search request and then call the render function
     try {
@@ -19,33 +29,33 @@ async function performSearch(query) {
         renderResults(json);
         console.log(json);
     } catch (error) {
-        console.error(error);
+        console.error(`Error while performing search: ${error}`);
     }
 
 }
 
+const debouncedSearch = debounce(performSearch, 300);
+
+
 function searchBoxInputListener(event) {
+
+    // If there is a pending search request that has not been sent yet, cancel it
+    clearTimeout(timeoutRef);
+
     if (searchBox.value !== "") {
-        // If there is a pending search request that has not been sent yet, cancel it
-        if (timeoutRef !== undefined) {
-            clearTimeout(timeoutRef);
-            timeoutRef = undefined;
-        }
         // Used to limit how frequently API calls are made
         // Waits 300ms before sending a search request to the OMDB API
         timeoutRef = setTimeout(performSearch, 300, searchBox.value);
     }
-    else if (timeoutRef !== undefined) {
-        clearTimeout(timeoutRef);
+    else {
+        clearCurrentResults();
     }
 }
 
 function searchBoxKeyListener(event) {
-    // Called when the user presses enter in the search box
+    // Perform a search when the user presses enter
     if (event.code === "Enter" && searchBox.value !== "") {
-        if (timeoutRef !== undefined) {
-            clearTimeout(timeoutRef);
-        }
+        clearTimeout(timeoutRef);
         performSearch(searchBox.value);
     }
     // Clear the search box when the user presses escape
@@ -61,7 +71,7 @@ function renderResults(response) {
         let resultElementArray = [];
         // Generate an array of result elements from the JSON results array
         response.Search.forEach(result => {
-            resultElementArray.push(createResultElement(result));
+            resultElementArray.push(createMovieCard(result));
         });
         // Add all elements from the results array to the results list
         resultsList.append(...resultElementArray);
@@ -84,104 +94,5 @@ function showAlert() {
 function clearCurrentResults() {
     resultsList.innerHTML = "";
 }
-
-function createPlaceHolder() {
-    // Creates a placeholder element
-    let resultElem = document.createElement("div");
-    let resultCard = document.createElement("div");
-    let posterLink = document.createElement("a");
-    let posterContainer = document.createElement("div");
-    let posterImg = document.createElement("img");
-    let cardBody = document.createElement("div");
-    let cardTitle = document.createElement("h6");
-    let cardSubtitle = document.createElement("p");
-    let favouriteButton = document.createElement("input");
-    let favouriteButtonLabel = document.createElement("label");
-
-    // Add css classes
-    resultElem.classList.add("col");
-    resultCard.classList.add("card", "mb-2");
-    cardBody.classList.add("card-body");
-    cardTitle.classList.add("card-title");
-    cardSubtitle.classList.add("card-subtitle", "text-muted");
-    favouriteButton.classList.add("favourite-button", "btn-check");
-    favouriteButtonLabel.classList.add("btn", "btn-sm", "btn-outline-danger", "far", "fa-heart");
-    posterLink.href = `/movie.html#${result.imdbID}`;
-    posterContainer.classList.add("card-img-top", "poster-container");
-
-    //Set miscellaneous properties
-    favouriteButton.setAttribute("type", "checkbox");
-    favouriteButton.setAttribute("id", `btn-check-${result.imdbID}`);
-    favouriteButtonLabel.setAttribute("for", `btn-check-${result.imdbID}`);
-
-    // Set the content of inner elements
-    cardTitle.innerText = `${result.Title}`;
-    cardSubtitle.innerText = `${result.Year}`;
-
-    if (result.Poster !== "N/A") {
-        posterImg.setAttribute("src", `${result.Poster}`);
-    }
-
-    posterLink.appendChild(posterContainer);
-    posterContainer.appendChild(posterImg);
-    cardBody.appendChild(cardTitle);
-    cardBody.appendChild(cardSubtitle);
-    cardBody.appendChild(favouriteButton);
-    cardBody.appendChild(favouriteButtonLabel);
-    resultCard.appendChild(posterLink);
-    resultCard.appendChild(cardBody);
-    resultElem.appendChild(resultCard);
-    return resultElem;
-}
-
-function createResultElement(result) {
-    // Creates the DOM representation of a result
-    let resultElem = document.createElement("div");
-    let resultCard = document.createElement("div");
-    let posterLink = document.createElement("a");
-    let posterContainer = document.createElement("div");
-    let posterImg = document.createElement("img");
-    let cardBody = document.createElement("div");
-    let cardTitle = document.createElement("h6");
-    let cardSubtitle = document.createElement("p");
-    let favouriteButton = document.createElement("input");
-    let favouriteButtonLabel = document.createElement("label");
-
-    // Add css classes
-    resultElem.classList.add("col");
-    resultCard.classList.add("card", "mb-2");
-    cardBody.classList.add("card-body");
-    cardTitle.classList.add("card-title");
-    cardSubtitle.classList.add("card-subtitle", "text-muted");
-    favouriteButton.classList.add("favourite-button", "btn-check");
-    favouriteButtonLabel.classList.add("btn", "btn-sm", "btn-outline-danger", "far", "fa-heart");
-    posterLink.href = `/movie.html#${result.imdbID}`;
-    posterContainer.classList.add("card-img-top", "poster-container");
-
-    //Set miscellaneous properties
-    favouriteButton.setAttribute("type", "checkbox");
-    favouriteButton.setAttribute("id", `btn-check-${result.imdbID}`);
-    favouriteButtonLabel.setAttribute("for", `btn-check-${result.imdbID}`);
-
-    // Set the content of inner elements
-    cardTitle.innerText = `${result.Title}`;
-    cardSubtitle.innerText = `${result.Year}`;
-
-    if (result.Poster !== "N/A") {
-        posterImg.setAttribute("src", `${result.Poster}`);
-    }
-
-    posterLink.appendChild(posterContainer);
-    posterContainer.appendChild(posterImg);
-    cardBody.appendChild(cardTitle);
-    cardBody.appendChild(cardSubtitle);
-    cardBody.appendChild(favouriteButton);
-    cardBody.appendChild(favouriteButtonLabel);
-    resultCard.appendChild(posterLink);
-    resultCard.appendChild(cardBody);
-    resultElem.appendChild(resultCard);
-    return resultElem;
-}
-
 
 init();
