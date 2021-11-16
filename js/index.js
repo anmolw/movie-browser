@@ -1,15 +1,16 @@
+// Search timeout reference. Used to debounce API requests
 let timeoutRef;
 // References to important UI elements
 const resultsList = document.getElementById("results");
 const searchBox = document.getElementById("search-box");
 const searchButton = document.getElementById("search-button");
+// The last value of the search box
 let lastSearchValue = "";
 
 
 function init() {
     // Register the searchbox listener
-    // searchBox.addEventListener("input", searchBoxInputListener);
-    searchBox.addEventListener("keyup", searchBoxKeyListener);
+    searchBox.addEventListener("input", searchBoxKeyListener);
 }
 
 async function performSearch(query) {
@@ -25,41 +26,26 @@ async function performSearch(query) {
 
 }
 
-function searchBoxInputListener(event) {
-
-    // If there is a pending search request that has not been sent yet, cancel it
-    clearTimeout(timeoutRef);
-
-    if (searchBox.value !== "") {
-        // Used to limit how frequently API calls are made
-        // Waits 300ms before sending a search request to the OMDB API
-
-    }
-    else {
-        clearCurrentResults();
-    }
-}
-
+// Listens for changes to the search box value
 function searchBoxKeyListener(event) {
+    // Only perform a search if the value has changed
     if (searchBox.value !== lastSearchValue) {
         lastSearchValue = searchBox.value;
+        // Clear a pending API request if it exists
         clearTimeout(timeoutRef);
         if (searchBox.value !== "") {
+            // Wait 300ms before sending a search request to the API
             timeoutRef = setTimeout(performSearch, 300, searchBox.value);
         }
         else {
             clearCurrentResults();
         }
     }
-    else if (event.keyCode === "Escape") {
-        lastSearchValue = "";
-        searchBox.value = "";
-        clearCurrentResults();
-    }
 }
 
+
+// Renders the search results
 function renderResults(response) {
-    // Renders the search results
     clearCurrentResults();
     if (response.Response === 'True') {
         let resultElementArray = [];
@@ -89,6 +75,7 @@ function showAlert(message) {
     resultsList.appendChild(alertElem);
 }
 
+// Clear the list of results
 function clearCurrentResults() {
     resultsList.innerHTML = "";
 }

@@ -21,7 +21,7 @@ function createMovieCard(movie, favBtnCallback) {
     cardBody.classList.add("card-body");
     cardTitle.classList.add("card-title");
     cardSubtitle.classList.add("card-subtitle", "d-flex");
-    favouriteButtonElem.classList.add("favourite-button");
+    favouriteButtonElem.classList.add("favourite-button", "ml-auto");
     favouriteButtonInput.classList.add("btn-check");
     favouriteButtonLabel.classList.add("btn", "btn-sm", "btn-outline-danger", "far", "fa-heart");
     posterContainer.classList.add("card-img-top", "poster-container");
@@ -35,6 +35,7 @@ function createMovieCard(movie, favBtnCallback) {
 
     // Set the status of the favourite checkbox
     favouriteButtonInput.checked = FavouritesStorage.containsID(movie.imdbID);
+    // Toggle the favourite status of the movie when the favourite button is pressed
     favouriteButtonInput.addEventListener("change", (e) => {
         if (favouriteButtonInput.checked) {
             FavouritesStorage.addFavourite(movie);

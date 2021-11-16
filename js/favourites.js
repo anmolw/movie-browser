@@ -1,5 +1,6 @@
 const favouritesList = document.getElementById("favourites-list");
 
+// Load favourites from local storage and render them
 function init() {
     let favouritesArray = [];
     for (let movie of FavouritesStorage.loadFavourites()) {

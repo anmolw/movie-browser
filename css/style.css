@@ -1,5 +1,9 @@
 :root {
-    
+    --bs-dark-rgb: 46,2,25;
+}
+
+body {
+    background-color: rgba(var(--bs-light-rgb));
 }
 
 /** 
@@ -59,6 +63,14 @@ main {
 
 footer {
     display: block;
+}
+
+footer a {
+    color:rgb(219, 219, 219);
+}
+
+footer a:hover {
+    color:rgb(255, 255, 255);
 }
 
 /** Truncate movie titles **/

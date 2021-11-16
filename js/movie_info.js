@@ -9,8 +9,7 @@ const movieRuntime = document.getElementById("movie-runtime");
 const favouriteButton = document.getElementById("favourite-button");
 
 // Main function for a single movie page
-// Fetches movie information based on the movieID present after the #
-// in the URL
+// Fetches movie information based on the movieID present after the # in the URL
 async function init() {
     const movieID = window.location.hash.substring(1);
     if (movieID !== "") {
